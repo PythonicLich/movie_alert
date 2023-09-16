@@ -59,6 +59,7 @@ def movie_page_scraping(movie_url, existing_session=None):
         date = re.findall(".+(?=en salle)", meta)[0].strip() if home_page is not None else ""
         time = re.findall("/(.+?)/", meta)[0].strip() if home_page is not None else ""
         genre = re.findall("/(.+?)/(.+)", meta)[0][1].strip() if home_page is not None else ""
+        cities = home_page.find(css.values["css_cities"], first=True) if home_page is not None else ""
     except Exception as e:
         print("Error while processing home_page : " + str(type(e)) + " " + str(e))
     try:
@@ -81,6 +82,7 @@ def movie_page_scraping(movie_url, existing_session=None):
                   "date": date,
                   "time": time,
                   "genre": genre,
+                  "cities": cities,
                   "directors": directors,
                   "writers": writers,
                   "actors": actors,
