@@ -160,6 +160,16 @@ def test_faulty_movie():
         print("Error while retrieving the faulty link : " + str(type(e)) + " " + str(e) + " \n" + str(e.__traceback__))
 
 
+def test_data():
+    file = open("2023 09 16 - 19 05 03 movie_data.json", "r", encoding="utf-8")
+    data = json.load(file)
+    file.close()
+    for movie in data:
+        if (movie["critic note"] > 4 or movie["public note"] > 4):
+            print(movie["title"])
+            print("date = " + movie["date"])
+
+
 if __name__ == "__main__":
     default_loop()
     #test_faulty_movie()
