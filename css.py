@@ -18,5 +18,6 @@ values = {
 "css_sound_track" : "div.section.casting-list-gql a.item.link",
 "css_public_critic_url" : "a[title='Critiques spectateurs']",
 "css_pro_critic_url" : "a[title='Critiques presse']",
-"css_note" : "div.big-note span.note"
+"css_note" : "div.big-note span.note",
+    "css_pro_critic_note": "span.stareval-note"
 }
