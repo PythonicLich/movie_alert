@@ -9,3 +9,8 @@ venv.bak/
 
 .idea
 .git
+
+dummy.html
+display/node_modules
+*dummy*
+*.json
