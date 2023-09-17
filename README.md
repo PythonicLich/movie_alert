@@ -7,7 +7,8 @@ The project is not yet fully functional
 ```bash
 pip install
 cd display
-yarn build``` 
+yarn build
+``` 
 
 ## Usage (to do)
 First populate the data with `python allocine`, then run `yarn dev` to be able to display and filter the data
