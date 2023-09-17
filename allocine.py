@@ -3,6 +3,7 @@ import re
 import css
 import json
 import datetime
+import pickle
 import traceback
 
 
@@ -30,7 +31,7 @@ def movie_page_scraping(movie_url, existing_session=None):
     casting_url = ""
     critic_url = ""
     public_url = ""
-    if(False):
+    if (False):
         timestamp = datetime.datetime.now().strftime("%Y %m %d - %H %M %S")
         with open(timestamp + "faulty_movie.html", "w", encoding="utf-8") as file:
             file.write(home_page.html)
@@ -44,7 +45,7 @@ def movie_page_scraping(movie_url, existing_session=None):
         print(f"number of urls : {len(home_page.absolute_links)}")
         if (len([x for x in home_page.absolute_links if "casting" in x]) == 0):
             casting_url = public_url.replace("/critiques/spectateurs/", "/casting")
-        #[print(x) for x in home_page.absolute_links]
+        # [print(x) for x in home_page.absolute_links]
     try:
         casting_page = session.get(casting_url).html if casting_url != "" else None
         critic_page = session.get(critic_url).html if critic_url != "" else None
@@ -59,7 +60,7 @@ def movie_page_scraping(movie_url, existing_session=None):
         date = re.findall(".+(?=en salle)", meta)[0].strip() if home_page is not None else ""
         time = re.findall("/(.+?)/", meta)[0].strip() if home_page is not None else ""
         genre = re.findall("/(.+?)/(.+)", meta)[0][1].strip() if home_page is not None else ""
-        cities = home_page.find(css.values["css_cities"], first=True) if home_page is not None else ""
+        cities = home_page.find(css.values["css_cities"], first=True).text if home_page is not None else ""
         id = re.findall("(?<=cfilm=)(\d+)(?=.html)", movie_url)[0] if movie_url is not None else ""
         poster = home_page.find(css.values["css_poster"], first=True).attrs["src"] if home_page is not None else ""
     except Exception as e:
@@ -68,32 +69,35 @@ def movie_page_scraping(movie_url, existing_session=None):
         directors = [x.text for x in casting_page.find(css.values["css_directors"])] if casting_page is not None else ""
         writers = [x.text for x in casting_page.find(css.values["css_writers"])] if casting_page is not None else ""
         actors = [x.text for x in casting_page.find(css.values["css_actors"])] if casting_page is not None else ""
-        soundtrack = [x.text for x in casting_page.find(css.values["css_sound_track"])] if casting_page is not None else ""
+        soundtrack = [x.text for x in
+                      casting_page.find(css.values["css_sound_track"])] if casting_page is not None else ""
         everyone = [x.text for x in casting_page.find(css.values["css_everyone"])] if casting_page is not None else ""
     except Exception as e:
         print("Error while accessing the casting page " + str(type(e)) + " " + str(e))
     try:
         public_note = 0
         critic_note = 0
-        public_note = float(public_page.find(css.values["css_note"], first=True).text.replace(",", ".")) if public_page is not None else 0
-        critic_note = float(critic_page.find(css.values["css_pro_critic_note"], first=True).text.replace(",", ".")) if public_page is not None else 0
+        public_note = float(public_page.find(css.values["css_note"], first=True).text.replace(",",
+                                                                                              ".")) if public_page is not None else 0
+        critic_note = float(critic_page.find(css.values["css_pro_critic_note"], first=True).text.replace(",",
+                                                                                                         ".")) if public_page is not None else 0
     except Exception as e:
         print("Weird exception while trying to convert the string note to a number " + str(type(e)) + " " + str(e))
-    dictionary = {"title": title,
-                  "synopsis": synopsis,
-                  "date": date,
-                  "time": time,
-                  "genre": genre,
-                  "cities": cities,
-                  "directors": directors,
-                  "writers": writers,
-                  "actors": actors,
-                  "soundtrack": soundtrack,
-                  "public note": public_note,
-                  "critic note": critic_note,
-                  "everyone": everyone,
-                  "id":id,
-                  "poster":poster}
+    dictionary = {"title": str(title),
+                  "synopsis": str(synopsis),
+                  "date": str(date),
+                  "time": str(time),
+                  "genre": str(genre),
+                  "cities": str(cities),
+                  "directors": str(directors),
+                  "writers": str(writers),
+                  "actors": str(actors),
+                  "soundtrack": str(soundtrack),
+                  "public note": str(public_note),
+                  "critic note": str(critic_note),
+                  "everyone": str(everyone),
+                  "id": str(id),
+                  "poster": str(poster)}
     if existing_session is not None:
         session.close()
     return dictionary
@@ -133,7 +137,7 @@ def default_loop():
         movie_links = get_movie_links(main_session)
         # with open("2023 09 16 - 17 09 48 data.json", "r", encoding="utf-8") as f:
         #    movie_links = json.load(f)
-        with open("\\data\\"+timestamp + " data.json", "w", encoding="utf-8") as f:
+        with open(".\\data\\" + timestamp + " data.json", "w", encoding="utf-8") as f:
             json.dump(movie_links, f, indent=4, ensure_ascii=False)
     except Exception as e:
         print("Error while retrieving the links " + str(type(e)) + " " + str(e))
@@ -143,22 +147,36 @@ def default_loop():
         json_movie_links = movie_links
         for movie_link in json_movie_links:
             try:
-                print(movie_link)
+                timestamp2 = datetime.datetime.now().strftime("%Y %m %d - %H %M %S")
+                print(timestamp2+" "+movie_link)
                 movie_data = movie_page_scraping(movie_link, main_session)
                 movies.append(movie_data)
             except Exception as e:
                 print("Error while looping the movies " + str(type(e)) + " " + str(e))
     except Exception as e:
         print("Error while retrieving the movies " + str(type(e)) + " " + str(e))
-    with open("\\data\\"+timestamp + " movie_data.json", "w", encoding="utf-8") as f:
-        json.dump(movies, f, indent=4, ensure_ascii=False)
+    try:
+        with open(".\\data\\" + timestamp + " movie_data.json", "w", encoding="utf-8") as f:
+            json.dump(movies, f, indent=4, ensure_ascii=False)
+    except:
+        print("Error while saving the json file")
+    try:
+        with open(".\\data\\"+timestamp+" movie_data.pickle", "w", encoding="utf-8") as f:
+            pickle.dump(movies, f)
+    except:
+        print("Error while saving the pickle file")
+    try:
+        with open(".\\data\\"+timestamp+" movie_data.txt", "w", encoding="utf-8") as f:
+            f.write(str(movies))
+    except:
+        print("Error while saving the txt file")
     main_session.close()
 
 
 def test_faulty_movie():
     try:
         that_movie = movie_page_scraping("https://www.allocine.fr/film/fichefilm_gen_cfilm=309058.html")
-        #[print(x, " ", that_movie[x]) for x in that_movie]
+        # [print(x, " ", that_movie[x]) for x in that_movie]
 
     except Exception as e:
         print("Error while retrieving the faulty link : " + str(type(e)) + " " + str(e) + " \n" + str(e.__traceback__))
@@ -176,4 +194,4 @@ def test_data():
 
 if __name__ == "__main__":
     default_loop()
-    #test_faulty_movie()
+    # test_faulty_movie()

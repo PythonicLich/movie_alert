@@ -15,7 +15,7 @@ import frieza from "../assets/dbz-dragon-ball-z.gif";
 import orochimaru from "../assets/orochimaru.gif";
 import narutoorochimaru from "../assets/naruto-orochimaru.gif";
 import kabuto from "../assets/snake-sage-mode-kabuto.gif";
-import dataset from "../../data/2023 09 16 - 19 05 03 movie_data.json"
+import dataset from "../../data/2023 09 17 - 11 46 29 movie_data.json"
 
 function Filters() {
   
