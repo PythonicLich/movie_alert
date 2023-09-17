@@ -60,6 +60,8 @@ def movie_page_scraping(movie_url, existing_session=None):
         time = re.findall("/(.+?)/", meta)[0].strip() if home_page is not None else ""
         genre = re.findall("/(.+?)/(.+)", meta)[0][1].strip() if home_page is not None else ""
         cities = home_page.find(css.values["css_cities"], first=True) if home_page is not None else ""
+        id = re.findall("(?<=cfilm=)(\d+)(?=.html)", movie_url)[0] if movie_url is not None else ""
+        poster = home_page.find(css.values["css_poster"], first=True).attrs["src"] if home_page is not None else ""
     except Exception as e:
         print("Error while processing home_page : " + str(type(e)) + " " + str(e))
     try:
@@ -89,7 +91,9 @@ def movie_page_scraping(movie_url, existing_session=None):
                   "soundtrack": soundtrack,
                   "public note": public_note,
                   "critic note": critic_note,
-                  "everyone": everyone}
+                  "everyone": everyone,
+                  "id":id,
+                  "poster":poster}
     if existing_session is not None:
         session.close()
     return dictionary
@@ -129,7 +133,7 @@ def default_loop():
         movie_links = get_movie_links(main_session)
         # with open("2023 09 16 - 17 09 48 data.json", "r", encoding="utf-8") as f:
         #    movie_links = json.load(f)
-        with open(timestamp + " data.json", "w", encoding="utf-8") as f:
+        with open("\\data\\"+timestamp + " data.json", "w", encoding="utf-8") as f:
             json.dump(movie_links, f, indent=4, ensure_ascii=False)
     except Exception as e:
         print("Error while retrieving the links " + str(type(e)) + " " + str(e))
@@ -146,7 +150,7 @@ def default_loop():
                 print("Error while looping the movies " + str(type(e)) + " " + str(e))
     except Exception as e:
         print("Error while retrieving the movies " + str(type(e)) + " " + str(e))
-    with open(timestamp + " movie_data.json", "w", encoding="utf-8") as f:
+    with open("\\data\\"+timestamp + " movie_data.json", "w", encoding="utf-8") as f:
         json.dump(movies, f, indent=4, ensure_ascii=False)
     main_session.close()
 
