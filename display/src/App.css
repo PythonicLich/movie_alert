@@ -1,6 +1,6 @@
 * {
-  margin:0;
-  padding:0;
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
   font-family: Futura;
 }
@@ -10,6 +10,7 @@
   min-height: 100vh;
   margin: 0 auto;
   text-align: center;
+  background-color: salmon;
 }
 
 header {
@@ -27,7 +28,6 @@ header img {
   background-color: lightslategray;
   border-radius: 20px;
 }
-
 
 @media (prefers-reduced-motion: no-preference) {
   a:nth-of-type(2) .logo {

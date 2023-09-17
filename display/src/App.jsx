@@ -17,6 +17,14 @@ import narutoorochimaru from "../assets/naruto-orochimaru.gif";
 import kabuto from "../assets/snake-sage-mode-kabuto.gif";
 import dataset from "../../data/2023 09 16 - 19 05 03 movie_data.json"
 
+function Filters() {
+  
+}
+
+function FilteredList() {
+
+}
+
 function App() {
   const [count, setCount] = useState(8999);
   const increaseClick = () => setCount(count + 1);
